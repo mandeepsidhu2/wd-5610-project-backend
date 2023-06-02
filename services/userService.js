@@ -6,3 +6,5 @@ exports.getAllUsers = async () => {
   exports.createUser = async (user) => {
     return await UserModel.create(user);
   };
+
+  

@@ -3,6 +3,7 @@ const { health } = require("./controllers/healthController");
 const app = express();
 const mongodb = require("./database/mongo")
 const userRouter = require("./routers/userRouter");
+const loginRouter = require("./routers/authRouter")
 const healthRouter = require("./routers/healthRouter");
 
 
@@ -15,6 +16,7 @@ app.listen(3001, () => {
 });
 
 app.use("/api/user", userRouter);
+app.use("/api/login", loginRouter);
 app.use("/api/health", healthRouter);
 
 module.exports = app;
