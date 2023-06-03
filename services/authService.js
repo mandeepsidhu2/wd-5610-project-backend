@@ -17,6 +17,6 @@ exports.loginUser = async ({token}) => {
           expiresIn: "96h",
         }
       );
-    return jwtToken
+    return {jwtToken,...payload}
    
   };
