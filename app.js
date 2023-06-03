@@ -5,8 +5,8 @@ const mongodb = require("./database/mongo")
 const userRouter = require("./routers/userRouter");
 const loginRouter = require("./routers/authRouter")
 const healthRouter = require("./routers/healthRouter");
-
-
+var cors = require('cors')
+app.use(cors())
 app.use(express.json());
 mongodb.dbConnect();
 require('dotenv').config()
