@@ -1,10 +1,12 @@
 const jwt = require("jsonwebtoken");
 const reviewSchema = require("../dbModels/review")
+const movieService = require("../services/movieService")
 // const mongoClient = require("../database/mongo")
 require('dotenv').config()
 const mongoose = require("mongoose");
 
 exports.postReview = async (payload) => {
+    await movieService.createMovieIfNotExists(payload.movie)
     await reviewSchema.create(payload)
    
   };
