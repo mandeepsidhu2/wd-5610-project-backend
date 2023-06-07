@@ -6,6 +6,7 @@ const userRouter = require("./routers/userRouter");
 const loginRouter = require("./routers/authRouter");
 const healthRouter = require("./routers/healthRouter");
 const searchRouter = require("./routers/searchRouter");
+const reviewRouter = require("./routers/reviewRouter")
 var cors = require("cors");
 app.use(cors());
 app.use(express.json());
@@ -20,4 +21,6 @@ app.use("/api/user", userRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/search", searchRouter);
+app.use("/api/review", reviewRouter);
+
 module.exports = app;

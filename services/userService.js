@@ -4,6 +4,9 @@ exports.getAllUsers = async () => {
   };
    
   exports.createUser = async (user) => {
+    console.log(user)
+    const userExists = await UserModel.find({id:user.id})
+    if(userExists!=null)return userExists;
     return await UserModel.create(user);
   };
 
