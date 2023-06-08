@@ -12,6 +12,7 @@ exports.getAllUsers = async (req, res) => {
   };
    
 
+  
 //   curl -X POST -H "Content-Type: application/json" -d '{"name":"value1", "email":"value2","image_url":"image"}' http://localhost:3001/api/user
   exports.createUser = async (req, res) => {
     try {
