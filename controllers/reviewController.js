@@ -13,10 +13,11 @@ const {authenticate} = require("./authMiddleware")
   //     "Poster": "https://m.media-amazon.com/images/M/MV5BODI5MzQ2NDg0MV5BMl5BanBnXkFtZTcwNTEwMzI1OQ@@._V1_SX300.jpg"
   //   }
   // }
-//  curl -X POST -H "Content-Type: application/json" -H "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODYwOTkxNTQsImV4cCI6MTY4NjQ0NDc1NH0.SiPxn2L4nu89u1mCV4Ud4-fAPFHh2bhblA-7L9mq6_I" -d '{"userId":434,"description":"cfebjkfcj","movie":{"Title":"Fukrey","Year":"2013","imdbID":"tt2806788","Type":"movie","Poster":"https:\/\/m.media-amazon.com\/images\/M\/MV5BODI5MzQ2NDg0MV5BMl5BanBnXkFtZTcwNTEwMzI1OQ@@._V1_SX300.jpg"}}' http://localhost:3001/api/review
+//  curl -X POST -H "Content-Type: application/json" -H "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY1MTU3MjIsImV4cCI6MTY4Njg2MTMyMn0.jYwYDUL_miN3MvlU-T01wZvCSaJFOGtOr1SgQp2uMmw" -d '{"userId":434,"description":"cfebjkfcj","movie":{"Title":"Fukrey","Year":"2013","imdbID":"tt2806788","Type":"movie","Poster":"https:\/\/m.media-amazon.com\/images\/M\/MV5BODI5MzQ2NDg0MV5BMl5BanBnXkFtZTcwNTEwMzI1OQ@@._V1_SX300.jpg"}}' http://localhost:3001/api/review
 exports.postReview = async (req, res) => {
     try {
       const user=  authenticate(req.headers.token)
+      console.log(user)
       await ReviewService.postReview({...req.body,userId:user.user_id})
       res.json({ data: "pong", status: "success" });
     } catch (err) {
@@ -25,12 +26,13 @@ exports.postReview = async (req, res) => {
   };
 
 
-//  curl -X GET -H "Content-Type: application/json" -H "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODYwOTkxNTQsImV4cCI6MTY4NjQ0NDc1NH0.SiPxn2L4nu89u1mCV4Ud4-fAPFHh2bhblA-7L9mq6_I"  http://localhost:3001/api/getAllReviewsForUser/109011835276418143354
+//  curl -X GET -H "Content-Type: application/json" -H "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY1MTU3MjIsImV4cCI6MTY4Njg2MTMyMn0.jYwYDUL_miN3MvlU-T01wZvCSaJFOGtOr1SgQp2uMmw"  http://localhost:3001/api/review/getAllReviewsForUser
 
   exports.getAllReviewsForUser = async (req, res) => {
     try {
-      authenticate(req.headers.token)
-      const result=await ReviewService.getAllReviewsForUser(req.params["userId"])
+      const user=authenticate(req.headers.token)
+      console.log(user)
+      const result=await ReviewService.getAllReviewsForUser(user.user_id)
       res.json({ data: result, status: "success" });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -52,3 +54,20 @@ exports.postReview = async (req, res) => {
   };
 
   // vote reviews
+// upvote
+// curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5NzU1MDcwMTQzMjg0MjI2MzU5IiwiZW1haWwiOiJtYW5kZWVwLnNpZGh1MDcyMkBnbWFpbC5jb20iLCJuYW1lIjoiTWFuZGVlcCBTaWRodSIsImlhdCI6MTY4NjUxODAxNiwiZXhwIjoxNjg2ODYzNjE2fQ.emtw8dwg1wGq37pKT-4xqKys-4afqSLrqBVFUaJTnCY' -H "Content-type: application/json" -d '{"review_id":"1686516420866", "voteType":"upvote"}' 'http://localhost:3001/api/review/vote'
+// downvote
+//curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY1MTU3MjIsImV4cCI6MTY4Njg2MTMyMn0.jYwYDUL_miN3MvlU-T01wZvCSaJFOGtOr1SgQp2uMmw' -H "Content-type: application/json" -d '{"review_id":"1686516420866", "voteType":"downvote"}' 'http://localhost:3001/api/review/vote'
+  exports.vote = async (req, res) => {
+    try {
+      const user=  authenticate(req.headers.token)
+      console.log(user)
+      const result=await ReviewService.vote(user.user_id,req.body)
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+
