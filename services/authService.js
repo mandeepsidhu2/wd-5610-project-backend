@@ -8,8 +8,7 @@ exports.loginUser = async ({token}) => {
         idToken: token
     });
     const payload = ticket.getPayload();
-    console.log(payload)
-    await userService.createUser({name:payload.name,email:payload.email,id:payload.sub,image_url:payload.picture})
+    const user=await userService.createUser({name:payload.name,email:payload.email,id:payload.sub,image_url:payload.picture})
     const jwtToken = jwt.sign(
         { user_id: payload.sub, email: payload.email ,name:payload.name},
         process.env.JWT_TOKEN_KEY,
@@ -17,6 +16,6 @@ exports.loginUser = async ({token}) => {
           expiresIn: "96h",
         }
       );
-    return {jwtToken,...payload}
+    return {jwtToken,...payload,...user}
    
   };

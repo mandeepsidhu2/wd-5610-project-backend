@@ -4,9 +4,15 @@ exports.getAllUsers = async () => {
   };
    
   exports.createUser = async (user) => {
-    const userExists = await UserModel.find({id:user.id})
-    if(userExists!=null)return userExists;
-    return await UserModel.create(user);
+    let userExists = await UserModel.findOne({id:user.id})
+    let newUser=true;
+    if(userExists!=null)newUser = false
+    else  userExists =await  UserModel.create(user);
+    console.log({...userExists,newUser})
+    return {...userExists._doc,newUser}
   };
 
-  
+  exports.updateUser = async (user,payload) => {
+    return UserModel.updateOne({id:user.user_id},{type:payload.userType})
+   
+  };
