@@ -57,7 +57,7 @@ exports.postReview = async (req, res) => {
 // upvote
 // curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5NzU1MDcwMTQzMjg0MjI2MzU5IiwiZW1haWwiOiJtYW5kZWVwLnNpZGh1MDcyMkBnbWFpbC5jb20iLCJuYW1lIjoiTWFuZGVlcCBTaWRodSIsImlhdCI6MTY4NjUxODAxNiwiZXhwIjoxNjg2ODYzNjE2fQ.emtw8dwg1wGq37pKT-4xqKys-4afqSLrqBVFUaJTnCY' -H "Content-type: application/json" -d '{"review_id":"1686516420866", "voteType":"upvote"}' 'http://localhost:3001/api/review/vote'
 // downvote
-//curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" -d '{"review_id":"1686704892747", "voteType":"downvote"}' 'http://localhost:3001/api/review/vote'
+// curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" -d '{"review_id":"1686704892747", "voteType":"downvote"}' 'http://localhost:3001/api/review/vote'
   exports.vote = async (req, res) => {
     try {
       const user=  authenticate(req.headers.token)
@@ -68,6 +68,9 @@ exports.postReview = async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   };
+
+
+  // curl -X PUT -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" -d '{"reviewId":"1686704892747"}' 'http://localhost:3001/api/review/unvote'
 
   exports.unvote = async (req, res) => {
     try {
@@ -80,4 +83,27 @@ exports.postReview = async (req, res) => {
     }
   };
 
+  // curl -X DELETE -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" 'http://localhost:3001/api/review/1686704892747'
 
+  exports.deleteReview = async (req, res) => {
+    try {
+      const user=  authenticate(req.headers.token)
+      const result=await ReviewService.deleteReview(req.params.id)
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+  // curl -X PUT -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" -d '{"description":"Updated payload"}' 'http://localhost:3001/api/review/1686772444256'
+
+exports.updateReview = async (req, res) => {
+    try {
+      const user=  authenticate(req.headers.token)
+      const result=await ReviewService.updateReview(req.params.id,req.body)
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };

@@ -119,6 +119,17 @@ exports.getAllReviewsForUser = async(userId) =>{
   }
 
   exports.unvote = async(userId,payload) =>{
-    const filter = {userId:userId,reviewId:payload.review_id}
+    const filter = {userId:userId,reviewId:payload.reviewId}
+    console.log(filter)
     return voteSchema.deleteMany(filter)
+  }
+
+  exports.deleteReview = async(reviewId) =>{
+    const filter = {id:reviewId}
+    return reviewSchema.deleteMany(filter)
+  }
+
+  exports.updateReview = async(reviewId,payload) =>{
+    const filter = {id:reviewId}
+    return reviewSchema.updateMany(filter,payload)
   }
