@@ -2,7 +2,16 @@ const jwt = require("jsonwebtoken");
 const reviewSchema = require("../dbModels/review")
 const movieService = require("../services/movieService")
 const voteSchema = require("../dbModels/vote")
+// add movie object to this
 const aggregate_pipleine= [
+  {
+    $lookup: {
+      from: 'movies',
+      localField: 'movieId',
+      foreignField: 'id',
+      as: 'movie'
+    }
+  },
   {
     $lookup: {
       from: 'users',
@@ -25,6 +34,7 @@ const aggregate_pipleine= [
       user: 1,
       userId: 1,
       id: 1,
+      movie:1,
       upvotes: {
         $filter: {
           input: '$votes',
@@ -74,7 +84,7 @@ const mongoose = require("mongoose");
 
 exports.postReview = async (payload) => {
     await movieService.createMovieIfNotExists(payload.movie)
-    await reviewSchema.create({...payload,id:Date.now()})
+    await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
 };
 exports.getAllReviews = async (pageNo,limit) =>{
   console.log(typeof(pageNo)+ " "+limit+" ")
@@ -106,4 +116,9 @@ exports.getAllReviewsForUser = async(userId) =>{
     await voteSchema.deleteMany(filter)
     const data = {type:payload.voteType,userId,reviewId:payload.review_id}
     return voteSchema.create(data)
+  }
+
+  exports.unvote = async(userId,payload) =>{
+    const filter = {userId:userId,reviewId:payload.review_id}
+    return voteSchema.deleteMany(filter)
   }
