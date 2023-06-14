@@ -6,8 +6,12 @@ const userRouter = require("./routers/userRouter");
 const loginRouter = require("./routers/authRouter");
 const healthRouter = require("./routers/healthRouter");
 const searchRouter = require("./routers/searchRouter");
-const reviewRouter = require("./routers/reviewRouter")
-const movieRouter = require("./routers/movieRouter")
+const reviewRouter = require("./routers/reviewRouter");
+const movieRouter = require("./routers/movieRouter");
+const detailRouter=require("./routers/detailRouter");
+
+const axios = require('axios');
+
 
 var cors = require("cors");
 app.use(cors());
@@ -25,4 +29,6 @@ app.use("/api/health", healthRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/review", reviewRouter);
 app.use("/api/movie", movieRouter);
+app.use("/api/detail",detailRouter);
+
 module.exports = app;
