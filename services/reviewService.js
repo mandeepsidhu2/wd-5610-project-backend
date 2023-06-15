@@ -31,6 +31,7 @@ const aggregate_pipleine= [
   {
     $project: {
       description: 1,
+      reviewEndPeriod:1,
       user: 1,
       userId: 1,
       id: 1,
@@ -84,23 +85,36 @@ const mongoose = require("mongoose");
 
 exports.postReview = async (payload) => {
     await movieService.createMovieIfNotExists(payload.movie)
+    if(isNaN(payload.reviewEndPeriod))// place max movie length so it is always filtered
+      payload.reviewEndPeriod=1000
     await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
 };
-exports.getAllReviews = async (pageNo,limit) =>{
-  console.log(typeof(pageNo)+ " "+limit+" ")
+exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
+  if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
 
   return await reviewSchema.aggregate(
     [...aggregate_pipleine,
+      {
+        $match: {
+          reviewEndPeriod: { $lte: reviewEndPeriod }
+        }
+      },
       {$skip: (pageNo-1)*limit },
     {$limit: limit } ,
     { $sort: { createdAt: -1 } }
   ])
 }
-exports.getAllReviewsForUser = async(userId) =>{
+exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
+  if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   const users= await reviewSchema.aggregate(
     [
+      {
+        $match: {
+          reviewEndPeriod: { $lte: reviewEndPeriod }
+        }
+      },
       {
         '$match': {
           'userId': userId
