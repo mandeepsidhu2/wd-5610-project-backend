@@ -145,5 +145,6 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
 
   exports.updateReview = async(reviewId,payload) =>{
     const filter = {id:reviewId}
-    return reviewSchema.updateMany(filter,payload)
+
+    return reviewSchema.updateMany(filter,{description:payload.description})
   }
