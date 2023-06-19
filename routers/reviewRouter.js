@@ -4,6 +4,8 @@ const { postReview ,getAllReviewsForUser,getAllReviews,vote, unvote} = require("
 const router = express.Router({ mergeParams: true });
 
 router.route("/").post(postReview);
+router.route("/:id").delete(deleteReview);
+router.route("/:id").put(updateReview);
 router.route("/getAllReviewsForUser").get(getAllReviewsForUser);
 router.route("/getAllReviews").get(getAllReviews);
 router.route("/vote").post(vote)
