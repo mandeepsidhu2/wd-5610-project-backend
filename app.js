@@ -10,8 +10,6 @@ const reviewRouter = require("./routers/reviewRouter");
 const movieRouter = require("./routers/movieRouter");
 const detailRouter=require("./routers/detailRouter");
 
-const axios = require('axios');
-
 
 var cors = require("cors");
 app.use(cors());
