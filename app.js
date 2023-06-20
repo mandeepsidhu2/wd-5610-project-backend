@@ -8,8 +8,8 @@ const healthRouter = require("./routers/healthRouter");
 const searchRouter = require("./routers/searchRouter");
 const reviewRouter = require("./routers/reviewRouter");
 const movieRouter = require("./routers/movieRouter");
-const detailRouter=require("./routers/detailRouter");
-
+const detailRouter = require("./routers/detailRouter");
+const followRouter = require("./routers/followRouter");
 
 var cors = require("cors");
 app.use(cors());
@@ -27,5 +27,6 @@ app.use("/api/health", healthRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/review", reviewRouter);
 app.use("/api/movie", movieRouter);
-app.use("/api/detail",detailRouter);
+app.use("/api/detail", detailRouter);
+app.use("/api/follow", followRouter);
 module.exports = app;
