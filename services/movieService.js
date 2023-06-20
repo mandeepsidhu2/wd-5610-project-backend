@@ -6,7 +6,6 @@ exports.createMovieIfNotExists = async (payload)=>{
 };
 
 exports.vote = async (payload)=>{
-    console.log(payload)
     await this.createMovieIfNotExists(payload.movie)
     const filter = { id: payload.movie.imdbID };
     let update = null

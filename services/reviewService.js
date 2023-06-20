@@ -2,7 +2,16 @@ const jwt = require("jsonwebtoken");
 const reviewSchema = require("../dbModels/review")
 const movieService = require("../services/movieService")
 const voteSchema = require("../dbModels/vote")
+// add movie object to this
 const aggregate_pipleine= [
+  {
+    $lookup: {
+      from: 'movies',
+      localField: 'movieId',
+      foreignField: 'id',
+      as: 'movie'
+    }
+  },
   {
     $lookup: {
       from: 'users',
@@ -22,9 +31,12 @@ const aggregate_pipleine= [
   {
     $project: {
       description: 1,
+      reviewEndPeriod:1,
       user: 1,
       userId: 1,
       id: 1,
+      movie:1,
+      movieId:1,
       upvotes: {
         $filter: {
           input: '$votes',
@@ -74,23 +86,56 @@ const mongoose = require("mongoose");
 
 exports.postReview = async (payload) => {
     await movieService.createMovieIfNotExists(payload.movie)
-    await reviewSchema.create({...payload,id:Date.now()})
+    if(isNaN(payload.reviewEndPeriod))// place max movie length so it is always filtered
+      payload.reviewEndPeriod=1000
+    await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
 };
-exports.getAllReviews = async (pageNo,limit) =>{
-  console.log(typeof(pageNo)+ " "+limit+" ")
+exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
+  if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
 
   return await reviewSchema.aggregate(
     [...aggregate_pipleine,
+      {
+        $match: {
+          reviewEndPeriod: { $lte: reviewEndPeriod }
+        }
+      },
       {$skip: (pageNo-1)*limit },
     {$limit: limit } ,
     { $sort: { createdAt: -1 } }
   ])
 }
-exports.getAllReviewsForUser = async(userId) =>{
+
+
+exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
+  pageNo=parseInt(pageNo)
+  limit=parseInt(limit)
+  console.log(movieId)
+
+  return await reviewSchema.aggregate(
+    [...aggregate_pipleine,
+      {
+        $match: {
+          movieId: movieId
+        }
+      },
+      {$skip: (pageNo-1)*limit },
+    {$limit: limit } ,
+    { $sort: { createdAt: -1 } }
+  ])
+}
+
+exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
+  if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   const users= await reviewSchema.aggregate(
     [
+      {
+        $match: {
+          reviewEndPeriod: { $lte: reviewEndPeriod }
+        }
+      },
       {
         '$match': {
           'userId': userId
@@ -106,4 +151,21 @@ exports.getAllReviewsForUser = async(userId) =>{
     await voteSchema.deleteMany(filter)
     const data = {type:payload.voteType,userId,reviewId:payload.review_id}
     return voteSchema.create(data)
+  }
+
+  exports.unvote = async(userId,payload) =>{
+    const filter = {userId:userId,reviewId:payload.reviewId}
+    console.log(filter)
+    return voteSchema.deleteMany(filter)
+  }
+
+  exports.deleteReview = async(reviewId) =>{
+    const filter = {id:reviewId}
+    return reviewSchema.deleteMany(filter)
+  }
+
+  exports.updateReview = async(reviewId,payload) =>{
+    const filter = {id:reviewId}
+
+    return reviewSchema.updateMany(filter,{description:payload.description})
   }

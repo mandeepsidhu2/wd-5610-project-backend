@@ -7,6 +7,12 @@ const userSchema = new Schema({
   image_url: String,
   email: String,
   type: String,
+  bio: String,
+  phone: String,
+  spoilers: Number,
+  followers: Number,
+  following: Number,
+  userType: String,
   createdAt: {
     type: Date,
     default: Date.now,

@@ -6,6 +6,7 @@ const reviewSchema = new Schema({
   userId: String,
   movieId: String,
   description: String,
+  reviewEndPeriod: Number,
   upvote: Number,
   downvote: Number,
   createdAt: {
