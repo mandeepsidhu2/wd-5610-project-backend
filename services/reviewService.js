@@ -36,6 +36,7 @@ const aggregate_pipleine= [
       userId: 1,
       id: 1,
       movie:1,
+      movieId:1,
       upvotes: {
         $filter: {
           input: '$votes',
@@ -106,6 +107,26 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
     { $sort: { createdAt: -1 } }
   ])
 }
+
+
+exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
+  pageNo=parseInt(pageNo)
+  limit=parseInt(limit)
+  console.log(movieId)
+
+  return await reviewSchema.aggregate(
+    [...aggregate_pipleine,
+      {
+        $match: {
+          movieId: movieId
+        }
+      },
+      {$skip: (pageNo-1)*limit },
+    {$limit: limit } ,
+    { $sort: { createdAt: -1 } }
+  ])
+}
+
 exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   const users= await reviewSchema.aggregate(

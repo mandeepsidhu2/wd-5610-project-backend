@@ -54,6 +54,20 @@ exports.postReview = async (req, res) => {
     }
   };
 
+  // curl -X GET -H "Content-Type: application/json" http://localhost:3001/api/review/getAllReviewsForMovie\?pageNo\=1\&limit\=5\&movieId\=tt2806788
+
+  // all reviews sorted in desc order of time
+ 
+  exports.getAllReviewsForMovie = async (req, res) => {
+    try {
+      const result=await ReviewService.getAllReviewsForMovie(req.query["pageNo"],req.query["limit"],req.query["movieId"])
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
   // vote reviews
 // upvote
 // curl -X POST -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5NzU1MDcwMTQzMjg0MjI2MzU5IiwiZW1haWwiOiJtYW5kZWVwLnNpZGh1MDcyMkBnbWFpbC5jb20iLCJuYW1lIjoiTWFuZGVlcCBTaWRodSIsImlhdCI6MTY4NjUxODAxNiwiZXhwIjoxNjg2ODYzNjE2fQ.emtw8dwg1wGq37pKT-4xqKys-4afqSLrqBVFUaJTnCY' -H "Content-type: application/json" -d '{"review_id":"1686516420866", "voteType":"upvote"}' 'http://localhost:3001/api/review/vote'
