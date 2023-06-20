@@ -67,6 +67,15 @@ exports.postReview = async (req, res) => {
     }
   };
 
+  exports.getAllReviewsForMoviePeriod = async (req, res) => {
+    try {
+      const result=await ReviewService.getAllReviewsForMoviePeriod(req.query["pageNo"],req.query["limit"],req.query["movieId"],req.query["reviewEndPeriod"])
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
 
   // vote reviews
 // upvote

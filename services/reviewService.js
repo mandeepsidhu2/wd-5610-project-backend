@@ -113,12 +113,35 @@ exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
   console.log(movieId)
+  console.log("inside all reviews")
 
   return await reviewSchema.aggregate(
     [...aggregate_pipleine,
       {
         $match: {
           movieId: movieId
+          
+        }
+      },
+      {$skip: (pageNo-1)*limit },
+    {$limit: limit } ,
+    { $sort: { createdAt: -1 } }
+  ])
+}
+
+exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,reviewEndPeriod=1000) =>{
+  pageNo=parseInt(pageNo)
+  limit=parseInt(limit)
+  if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
+  console.log(movieId)
+  console.log(reviewEndPeriod)
+
+  return await reviewSchema.aggregate(
+    [...aggregate_pipleine,
+      {
+        $match: {
+          movieId: movieId,
+          reviewEndPeriod: { $lte: reviewEndPeriod }
         }
       },
       {$skip: (pageNo-1)*limit },
