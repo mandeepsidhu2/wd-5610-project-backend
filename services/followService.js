@@ -19,3 +19,13 @@ exports.follow = async (followerId, followeeId) => {
     });
   return { follow: "Success" };
 };
+
+exports.unfollow = async (followerId, followeeId) => {
+  let { followerExists } = await this.isFollowing(followerId, followeeId);
+  if (followerExists === undefined)
+    return FollowModel.deleteOne({
+      followerId: followerId,
+      followeeId: followeeId,
+    });
+  return { unfollow: "Success" };
+};
