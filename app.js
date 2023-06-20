@@ -28,5 +28,4 @@ app.use("/api/search", searchRouter);
 app.use("/api/review", reviewRouter);
 app.use("/api/movie", movieRouter);
 app.use("/api/detail",detailRouter);
-
 module.exports = app;
