@@ -12,6 +12,7 @@ const userSchema = new Schema({
   spoilers: Number,
   followers: Number,
   following: Number,
+  userType: String,
   createdAt: {
     type: Date,
     default: Date.now,
