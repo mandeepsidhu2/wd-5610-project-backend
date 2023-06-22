@@ -76,7 +76,17 @@ const aggregate_pipleine= [
             }
           }
         }
-      }
+      },
+      
+    }
+  },  {
+    $addFields: {
+      voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
+    }
+  },
+  {
+    $sort: {
+      voteDifference: -1
     }
   }
 ]
