@@ -15,9 +15,14 @@ exports.follow = async (followerId, followeeId) => {
   let { followerExists } = await this.isFollowing(followerId, followeeId);
   if (!followerExists) {
     const followee = await UserModel.findOne({ id: followeeId });
+    const follower = await UserModel.findOne({ id: followerId });
     await UserModel.updateOne(
       { id: followeeId },
       { followers: followee.followers + 1 }
+    );
+    await UserModel.updateOne(
+      { id: followerId },
+      { following: follower.following + 1 }
     );
     return FollowModel.create({
       followerId: followerId,
@@ -31,9 +36,14 @@ exports.unfollow = async (followerId, followeeId) => {
   let { followerExists } = await this.isFollowing(followerId, followeeId);
   if (followerExists === undefined) {
     const followee = await UserModel.findOne({ id: followeeId });
+    const follower = await UserModel.findOne({ id: followerId });
     await UserModel.updateOne(
       { id: followeeId },
       { followers: followee.followers - 1 }
+    );
+    await UserModel.updateOne(
+      { id: followerId },
+      { following: follower.following - 1 }
     );
     return FollowModel.deleteOne({
       followerId: followerId,
