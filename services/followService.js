@@ -52,3 +52,39 @@ exports.unfollow = async (followerId, followeeId) => {
   }
   return { unfollow: "Success" };
 };
+
+exports.getFollowers = async (userId) => {
+  return await FollowModel.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "followerId",
+        foreignField: "id",
+        as: "user",
+      },
+    },
+    {
+      $match: {
+        followeeId: userId,
+      },
+    },
+  ]);
+};
+
+exports.getFollowing = async (userId) => {
+  return await FollowModel.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "followeeId",
+        foreignField: "id",
+        as: "user",
+      },
+    },
+    {
+      $match: {
+        followerId: userId,
+      },
+    },
+  ]);
+};
