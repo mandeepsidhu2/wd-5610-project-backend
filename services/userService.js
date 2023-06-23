@@ -7,8 +7,10 @@ exports.createUser = async (user) => {
   let userExists = await UserModel.findOne({ id: user.id });
   let newUser = true;
   if (userExists != null) newUser = false;
-  else userExists = await UserModel.create(user);
-  console.log({ ...userExists, newUser });
+  else {
+     await UserModel.create(user);
+    userExists = await UserModel.findOne({ id: user.id });
+  }
   return { ...userExists._doc, newUser };
 };
 
@@ -17,7 +19,6 @@ exports.getUser = async (userId) => {
 };
 
 exports.updateUser = async (user, payload) => {
-  //console.log(payload);
   return UserModel.updateOne({ id: user.user_id }, payload);
 };
 

@@ -18,7 +18,6 @@ const { authenticate } = require("./authMiddleware");
 exports.postReview = async (req, res) => {
   try {
     const user = authenticate(req.headers.token);
-    console.log(user);
     await ReviewService.postReview({ ...req.body, userId: user.user_id });
     res.json({ data: "pong", status: "success" });
   } catch (err) {
@@ -31,7 +30,6 @@ exports.postReview = async (req, res) => {
 exports.getAllReviewsForUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-    console.log(userId);
     const result = await ReviewService.getAllReviewsForUser(userId);
     res.json({ data: result, status: "success" });
   } catch (err) {
@@ -45,7 +43,6 @@ exports.getAllReviewsForUser = async (req, res) => {
 
 exports.getAllReviews = async (req, res) => {
   try {
-    console.log(req.query["reviewEndPeriod"]);
     const result = await ReviewService.getAllReviews(
       req.query["pageNo"],
       req.query["limit"],
@@ -96,7 +93,6 @@ exports.getAllReviewsForMoviePeriod = async (req, res) => {
 exports.vote = async (req, res) => {
   try {
     const user = authenticate(req.headers.token);
-    console.log(user);
     const result = await ReviewService.vote(user.user_id, req.body);
     res.json({ data: result, status: "success" });
   } catch (err) {
@@ -109,7 +105,6 @@ exports.vote = async (req, res) => {
 exports.unvote = async (req, res) => {
   try {
     const user = authenticate(req.headers.token);
-    console.log(user);
     const result = await ReviewService.unvote(user.user_id, req.body);
     res.json({ data: result, status: "success" });
   } catch (err) {
@@ -122,7 +117,6 @@ exports.unvote = async (req, res) => {
   exports.deleteReview = async (req, res) => {
     try {
       const user=  authenticate(req.headers.token)
-      console.log(req.headers.userid)
       const result=await ReviewService.deleteReview(req.params.id, req.headers.userid)
       res.json({ data: result, status: "success" });
     } catch (err) {

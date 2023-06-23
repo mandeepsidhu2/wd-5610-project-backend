@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const reviewSchema = require("../dbModels/review")
 const movieService = require("../services/movieService")
-const userService = require("../services/userService")
 const voteSchema = require("../dbModels/vote")
 // add movie object to this
 const aggregate_pipleine= [
@@ -80,15 +79,6 @@ const aggregate_pipleine= [
       },
       
     }
-  },  {
-    $addFields: {
-      voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
-    }
-  },
-  {
-    $sort: {
-      voteDifference: -1
-    }
   }
 ]
 // const mongoClient = require("../database/mongo")
@@ -100,7 +90,6 @@ exports.postReview = async (payload) => {
     if(isNaN(payload.reviewEndPeriod))// place max movie length so it is always filtered
       payload.reviewEndPeriod=1000
     await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
-    await userService.updateSpoilerCount(payload.userId,"add")
 };
 exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
@@ -108,15 +97,24 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
   limit=parseInt(limit)
 
   return await reviewSchema.aggregate(
-    [...aggregate_pipleine,
+    [...aggregate_pipleine
+      ,  {
+        $addFields: {
+          voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
+        }
+      },
+      {
+        $sort: {
+          voteDifference: -1
+        }
+      },
       {
         $match: {
           reviewEndPeriod: { $lte: reviewEndPeriod }
         }
       },
       {$skip: (pageNo-1)*limit },
-    {$limit: limit } ,
-    { $sort: { createdAt: -1 } }
+    {$limit: limit }
   ])
 }
 
@@ -124,8 +122,7 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
 exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
-  console.log(movieId)
-  console.log("inside all reviews")
+
 
   return await reviewSchema.aggregate(
     [...aggregate_pipleine,
@@ -145,8 +142,7 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
-  console.log(movieId)
-  console.log(reviewEndPeriod)
+
 
   return await reviewSchema.aggregate(
     [...aggregate_pipleine,
@@ -190,13 +186,11 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
 
   exports.unvote = async(userId,payload) =>{
     const filter = {userId:userId,reviewId:payload.reviewId}
-    console.log(filter)
     return voteSchema.deleteMany(filter)
   }
 
-  exports.deleteReview = async(reviewId, userId) =>{
+  exports.deleteReview = async(reviewId) =>{
     const filter = {id:reviewId}
-    await userService.updateSpoilerCount(userId,"remove")
     return reviewSchema.deleteMany(filter)
   }
 
