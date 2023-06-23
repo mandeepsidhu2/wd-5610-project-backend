@@ -15,6 +15,7 @@ var cors = require("cors");
 app.use( cors({
   credentials: true,
   origin: "https://main--elegant-liger-55054f.netlify.app",
+  // origin: "http://localhost:3000",
 
 }) 
 )
