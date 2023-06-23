@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const reviewSchema = require("../dbModels/review")
 const movieService = require("../services/movieService")
+const userService = require("../services/userService")
 const voteSchema = require("../dbModels/vote")
 // add movie object to this
 const aggregate_pipleine= [
@@ -99,6 +100,7 @@ exports.postReview = async (payload) => {
     if(isNaN(payload.reviewEndPeriod))// place max movie length so it is always filtered
       payload.reviewEndPeriod=1000
     await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
+    await userService.updateSpoilerCount(payload.userId,"add")
 };
 exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
@@ -192,8 +194,9 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
     return voteSchema.deleteMany(filter)
   }
 
-  exports.deleteReview = async(reviewId) =>{
+  exports.deleteReview = async(reviewId, userId) =>{
     const filter = {id:reviewId}
+    await userService.updateSpoilerCount(userId,"remove")
     return reviewSchema.deleteMany(filter)
   }
 

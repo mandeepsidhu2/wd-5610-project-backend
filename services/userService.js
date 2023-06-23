@@ -20,3 +20,11 @@ exports.updateUser = async (user, payload) => {
   //console.log(payload);
   return UserModel.updateOne({ id: user.user_id }, payload);
 };
+
+exports.updateSpoilerCount = async (userId, type) => {
+  if(type==="add")
+    return UserModel.updateOne({ id: userId }, { $inc: { spoilers: 1 } });
+  else if(type==="remove"){
+    return UserModel.updateOne({ id: userId }, { $inc: { spoilers: -1 } });
+  }
+};

@@ -119,15 +119,16 @@ exports.unvote = async (req, res) => {
 
 // curl -X DELETE -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" 'http://localhost:3001/api/review/1686704892747'
 
-exports.deleteReview = async (req, res) => {
-  try {
-    const user = authenticate(req.headers.token);
-    const result = await ReviewService.deleteReview(req.params.id);
-    res.json({ data: result, status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+  exports.deleteReview = async (req, res) => {
+    try {
+      const user=  authenticate(req.headers.token)
+      console.log(req.headers.userid)
+      const result=await ReviewService.deleteReview(req.params.id, req.headers.userid)
+      res.json({ data: result, status: "success" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
 
 // curl -X PUT -H 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTA5MDExODM1Mjc2NDE4MTQzMzU0IiwiZW1haWwiOiJ0YWJiZXJvbmxpbmVAZ21haWwuY29tIiwibmFtZSI6InRhYmJlciBvbmxpbmUiLCJpYXQiOjE2ODY3MDQ3OTEsImV4cCI6MTY4NzA1MDM5MX0.CirlPhZ_S4otIaBy27J5dx1IWzhUS24Fuk8fyLM4Z5M' -H "Content-type: application/json" -d '{"description":"Updated payload"}' 'http://localhost:3001/api/review/1686772444256'
 
