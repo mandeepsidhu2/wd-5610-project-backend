@@ -35,3 +35,25 @@ exports.unfollow = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getFollowers = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const followers = await FollowService.getFollowers(userId);
+    res.json({ data: followers, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFollowing = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const following = await FollowService.getFollowing(userId);
+    res.json({ data: following, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
