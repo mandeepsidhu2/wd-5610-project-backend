@@ -31,7 +31,7 @@ exports.getAllReviewsForUser = async (req, res) => {
   try {
     const userId = req.params.userId;
     const result = await ReviewService.getAllReviewsForUser(userId);
-    res.json({ data: result, status: "success" });
+    res.json({ ...result, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -48,7 +48,7 @@ exports.getAllReviews = async (req, res) => {
       req.query["limit"],
       req.query["reviewEndPeriod"]
     );
-    res.json({ data: result, status: "success" });
+    res.json({ ...result, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -65,7 +65,7 @@ exports.getAllReviewsForMovie = async (req, res) => {
       req.query["limit"],
       req.query["movieId"]
     );
-    res.json({ data: result, status: "success" });
+    res.json({ ...result, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -79,7 +79,7 @@ exports.getAllReviewsForMoviePeriod = async (req, res) => {
       req.query["movieId"],
       req.query["reviewEndPeriod"]
     );
-    res.json({ data: result, status: "success" });
+    res.json({ ...result, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

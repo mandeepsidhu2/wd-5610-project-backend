@@ -98,7 +98,7 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
 
-  return await reviewSchema.aggregate(
+  const resp = await reviewSchema.aggregate(
     [...aggregate_pipleine
       ,  {
         $addFields: {
@@ -118,6 +118,7 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
       {$skip: (pageNo-1)*limit },
     {$limit: limit }
   ])
+  return {data:resp,totalCount:await reviewSchema.count({})}
 }
 
 
@@ -126,7 +127,7 @@ exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
   limit=parseInt(limit)
 
 
-  return await reviewSchema.aggregate(
+  const resp= await reviewSchema.aggregate(
     [...aggregate_pipleine,
       {
         $match: {
@@ -134,10 +135,12 @@ exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
           
         }
       },
+      { $sort: { createdAt: -1 } },
       {$skip: (pageNo-1)*limit },
-    {$limit: limit } ,
-    { $sort: { createdAt: -1 } }
+    {$limit: limit } 
+  
   ])
+  return {data:resp,totalCount:await reviewSchema.count({})}
 }
 
 exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,reviewEndPeriod=1000) =>{
@@ -146,7 +149,7 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
 
 
-  return await reviewSchema.aggregate(
+  const resp= await reviewSchema.aggregate(
     [...aggregate_pipleine,
       {
         $match: {
@@ -154,15 +157,17 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
           reviewEndPeriod: { $lte: reviewEndPeriod }
         }
       },
+      { $sort: { createdAt: -1 } },
       {$skip: (pageNo-1)*limit },
     {$limit: limit } ,
-    { $sort: { createdAt: -1 } }
+   
   ])
+  return {data:resp,totalCount:await reviewSchema.count({})}
 }
 
 exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
-  const users= await reviewSchema.aggregate(
+  const resp= await reviewSchema.aggregate(
     [
       {
         $match: {
@@ -176,7 +181,8 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
       },...aggregate_pipleine
     ]
   );
-  return users;
+  return {data:resp,totalCount:await reviewSchema.count({})}
+
   }
 
   exports.vote = async(userId,payload) =>{
