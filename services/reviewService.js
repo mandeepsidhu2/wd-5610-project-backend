@@ -31,6 +31,7 @@ const aggregate_pipleine= [
   },
   {
     $project: {
+      createdAt:1,
       description: 1,
       reviewEndPeriod:1,
       user: 1,
