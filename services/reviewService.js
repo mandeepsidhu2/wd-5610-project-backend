@@ -118,7 +118,7 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
       {$skip: (pageNo-1)*limit },
     {$limit: limit }
   ])
-  return {data:resp,totalCount:await reviewSchema.count({})}
+  return {data:resp,totalCount:await reviewSchema.count({ reviewEndPeriod: { $lte: reviewEndPeriod }})}
 }
 
 
@@ -140,7 +140,12 @@ exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
     {$limit: limit } 
   
   ])
-  return {data:resp,totalCount:await reviewSchema.count({})}
+  return {data:resp,totalCount:await reviewSchema.count(  {
+  
+      movieId
+      
+    
+  })}
 }
 
 exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,reviewEndPeriod=1000) =>{
@@ -162,7 +167,17 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
     {$limit: limit } ,
    
   ])
-  return {data:resp,totalCount:await reviewSchema.count({})}
+  return {
+    data: resp,
+    totalCount: await reviewSchema.count(
+      {
+      
+          movieId: movieId,
+          reviewEndPeriod: { $lte: reviewEndPeriod }
+        }
+    )
+    }
+  
 }
 
 exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
@@ -181,7 +196,16 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
       },...aggregate_pipleine
     ]
   );
-  return {data:resp,totalCount:await reviewSchema.count({})}
+
+  return {
+    data: resp,
+    totalCount: await reviewSchema.count(
+      {
+      
+        userId
+        }
+    )
+    }
 
   }
 
