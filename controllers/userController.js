@@ -35,6 +35,9 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     let userId = req.body.id;
+    if (!userId) {
+      userId = authenticate(req.headers.token);
+    }
     user = await UserService.updateUser(userId, req.body);
     res.json({ data: user, status: "success" });
   } catch (err) {
