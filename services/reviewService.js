@@ -101,21 +101,13 @@ exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
 
   const resp = await reviewSchema.aggregate(
     [...aggregate_pipleine
-      ,  {
-        $addFields: {
-          voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
-        }
-      },
-      {
-        $sort: {
-          voteDifference: -1
-        }
-      },
+     ,
       {
         $match: {
           reviewEndPeriod: { $lte: reviewEndPeriod }
         }
       },
+      { $sort: { createdAt: -1 } },
       {$skip: (pageNo-1)*limit },
     {$limit: limit }
   ])
@@ -136,7 +128,17 @@ exports.getAllReviewsForMovie = async (pageNo=1,limit=10000,movieId) =>{
           
         }
       },
-      { $sort: { createdAt: -1 } },
+      ,  {
+        $addFields: {
+          voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
+        }
+      },
+      {
+        $sort: {
+          voteDifference: -1
+        }
+      },
+   
       {$skip: (pageNo-1)*limit },
     {$limit: limit } 
   
@@ -162,8 +164,17 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
           movieId: movieId,
           reviewEndPeriod: { $lte: reviewEndPeriod }
         }
+      },  
+      {
+        $addFields: {
+          voteDifference: { $subtract: ['$totalUpvotes', '$totalDownvotes'] }
+        }
       },
-      { $sort: { createdAt: -1 } },
+      {
+        $sort: {
+          voteDifference: -1
+        }
+      },
       {$skip: (pageNo-1)*limit },
     {$limit: limit } ,
    
@@ -194,7 +205,8 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
         '$match': {
           'userId': userId
         }
-      },...aggregate_pipleine
+      },
+      ...aggregate_pipleine
     ]
   );
 
@@ -202,9 +214,9 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
     data: resp,
     totalCount: await reviewSchema.count(
       {
-      
-        userId
-        }
+        userId,
+        reviewEndPeriod: { $lte: reviewEndPeriod }
+      }
     )
     }
 
