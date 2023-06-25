@@ -94,7 +94,8 @@ exports.postReview = async (payload) => {
     await reviewSchema.create({...payload,id:Date.now(),movieId:payload.movie.imdbID})
     await userService.updateSpoilerCount(payload.userId,"add")
 };
-exports.getAllReviews = async (pageNo,limit,reviewEndPeriod=1000) =>{
+
+exports.getAllReviews = async (pageNo=1,limit=10000,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   pageNo=parseInt(pageNo)
   limit=parseInt(limit)
@@ -192,7 +193,7 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
   
 }
 
-exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
+exports.getAllReviewsForUser = async(pageNo=1,limit=10000,userId,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
   const resp= await reviewSchema.aggregate(
     [
@@ -206,7 +207,10 @@ exports.getAllReviewsForUser = async(userId,reviewEndPeriod=1000) =>{
           'userId': userId
         }
       },
-      ...aggregate_pipleine
+      ...aggregate_pipleine,
+      { $sort: { createdAt: -1 } },
+      {$skip: (pageNo-1)*limit },
+      {$limit: limit } ,
     ]
   );
 

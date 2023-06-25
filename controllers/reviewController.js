@@ -30,7 +30,7 @@ exports.postReview = async (req, res) => {
 exports.getAllReviewsForUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const result = await ReviewService.getAllReviewsForUser(userId);
+    const result = await ReviewService.getAllReviewsForUser(req.query["pageNo"],req.query["limit"],userId);
     res.json({ ...result, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
