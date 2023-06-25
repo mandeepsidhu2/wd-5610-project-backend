@@ -12,13 +12,13 @@ const detailRouter = require("./routers/detailRouter");
 const followRouter = require("./routers/followRouter");
 
 var cors = require("cors");
-app.use( cors({
-  credentials: true,
-    origin: "https://main--elegant-liger-55054f.netlify.app",
-   //origin: "http://localhost:3000",
-
-}) 
-)
+app.use(
+  cors({
+    credentials: true,
+    //origin: "https://main--elegant-liger-55054f.netlify.app",
+    origin: "http://localhost:3000",
+  })
+);
 app.use(express.json());
 mongodb.dbConnect();
 require("dotenv").config();
