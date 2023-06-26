@@ -195,6 +195,8 @@ exports.getAllReviewsForMoviePeriod = async (pageNo=1,limit=10000,movieId,review
 
 exports.getAllReviewsForUser = async(pageNo=1,limit=10000,userId,reviewEndPeriod=1000) =>{
   if(!isNaN(reviewEndPeriod))reviewEndPeriod=parseInt(reviewEndPeriod)
+  pageNo=parseInt(pageNo)
+  limit=parseInt(limit)
   const resp= await reviewSchema.aggregate(
     [
       {

@@ -17,6 +17,7 @@ router.route("/").post(postReview);
 router.route("/:id").delete(deleteReview);
 router.route("/:id").put(updateReview);
 router.route("/getAllReviewsForUser/:userId").get(getAllReviewsForUser);
+router.route("/getAllReviewsForUser/:userId/:pageNo/:limit").get(getAllReviewsForUser);
 router.route("/getAllReviewsForMovie").get(getAllReviewsForMovie);
 router.route("/getAllReviewsForMoviePeriod").get(getAllReviewsForMoviePeriod);
 router.route("/getAllReviews").get(getAllReviews);
